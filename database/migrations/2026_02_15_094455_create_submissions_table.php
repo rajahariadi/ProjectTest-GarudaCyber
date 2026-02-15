@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('submissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['student', 'lecturer']);
-            $table->rememberToken();
+            $table->foreignId('assignment_id')->constrained()->restrictOnDelete();
+            $table->foreignId('student_id')->constrained('users')->restrictOnDelete();
+            $table->string('file_path');
+            $table->integer('score')->nullable()->default(null);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('submissions');
     }
 };
