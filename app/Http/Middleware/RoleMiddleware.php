@@ -18,6 +18,7 @@ class RoleMiddleware
 
         if ($request->user()->role !== $role) {
             return response()->json([
+                'success' => false,
                 'message' => 'Tidak memiliki akses'
             ], 403);
         }
