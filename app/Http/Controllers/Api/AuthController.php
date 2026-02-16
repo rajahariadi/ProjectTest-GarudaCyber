@@ -33,6 +33,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'success' => false,
                 'message' => 'Validasi error',
                 'errors' => $validator->errors()
             ], 422);
@@ -76,6 +77,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'success' => false,
                 'message' => 'Validasi error',
                 'errors' => $validator->errors()
             ], 422);
@@ -84,6 +86,7 @@ class AuthController extends Controller
         try {
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response()->json([
+                    'success' => false,
                     'message' => 'Email atau Password salah'
                 ]);
             }
@@ -92,14 +95,14 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'message' => 'Login Berhasil',
                 'token' => $token,
                 'user' => $user
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'Terjadi kesalahan',
                 'error' => $th->getMessage()
             ]);
@@ -112,12 +115,12 @@ class AuthController extends Controller
             $request->user()->currentAccessToken()->delete();
 
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'message' => 'Logout Berhasil'
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'Terjadi kesalahan',
                 'error' => $th->getMessage()
             ]);
