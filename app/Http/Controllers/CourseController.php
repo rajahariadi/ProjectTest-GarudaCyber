@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,13 +18,13 @@ class CourseController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Courses berhasil diambil',
+                'message' => 'Course berhasil diambil',
                 'data' => $courses
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'Courses gagal diambil',
+                'message' => 'Course gagal diambil',
                 'error' => $th->getMessage()
             ], 500);
         }
@@ -54,13 +55,13 @@ class CourseController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Courses berhasil dibuat',
+                'message' => 'Course berhasil dibuat',
                 'data' => $course
             ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'Courses gagal dibuat',
+                'message' => 'Course gagal dibuat',
                 'error' => $th->getMessage()
             ], 500);
         }
@@ -99,13 +100,13 @@ class CourseController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data Courses berhasil diedit',
+                'message' => 'Course berhasil diedit',
                 'data' => $course
             ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data Courses gagal diedit',
+                'message' => 'Course gagal diedit',
                 'error' => $th->getMessage()
             ], 500);
         }
@@ -127,17 +128,57 @@ class CourseController extends Controller
             $course->delete();
             return response()->json([
                 'success' => true,
-                'message' => 'Data Courses berhasil dihapus',
+                'message' => 'Course berhasil dihapus',
                 'data' => $course
             ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data Courses gagal dihapus',
+                'message' => 'Course gagal dihapus',
                 'error' => $th->getMessage()
             ], 500);
         }
     }
 
-    public function enroll($id) {}
+    public function enroll($id)
+    {
+        $course = Course::find($id);
+
+        $alreadyEnrolled = Enrollment::where('student_id', Auth::id())
+            ->where('course_id', $id)
+            ->exists();
+
+        if ($alreadyEnrolled) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sudah mendaftar pada course ini'
+            ], 409);
+        }
+
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course tidak ditemukan'
+            ], 409);
+        }
+
+        try {
+            $enrollment = Enrollment::create([
+                'student_id' => Auth::id(),
+                'course_id' => $course->id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Course berhasil didaftarkan',
+                'data' => $enrollment
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course gagal didaftarkan',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
