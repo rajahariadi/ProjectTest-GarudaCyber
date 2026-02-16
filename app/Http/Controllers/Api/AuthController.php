@@ -49,12 +49,14 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
+                'success' => true,
                 'message' => 'Register berhasil',
                 'token' => $token,
                 'user' => $user
             ]);
         } catch (\Throwable $th) {
             return response()->json([
+                'success' => false,
                 'message' => 'Terjadi kesalahan',
                 'error' => $th->getMessage()
             ]);
@@ -90,12 +92,14 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
+                'status' => true,
                 'message' => 'Login Berhasil',
                 'token' => $token,
                 'user' => $user
             ]);
         } catch (\Throwable $th) {
             return response()->json([
+                'status' => false,
                 'message' => 'Terjadi kesalahan',
                 'error' => $th->getMessage()
             ]);
@@ -108,10 +112,12 @@ class AuthController extends Controller
             $request->user()->currentAccessToken()->delete();
 
             return response()->json([
+                'status' => true,
                 'message' => 'Logout Berhasil'
             ]);
         } catch (\Throwable $th) {
             return response()->json([
+                'status' => false,
                 'message' => 'Terjadi kesalahan',
                 'error' => $th->getMessage()
             ]);
