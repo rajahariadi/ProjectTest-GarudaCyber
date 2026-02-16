@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\SubmissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,12 +36,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
 
         Route::post('/materials', [MaterialController::class, 'upload']);
+
+        Route::post('/assignments', [AssignmentController::class, 'assignment']);
+
+        Route::post('/submissions/{id}/grade', [SubmissionController::class, 'grade']);
     });
 
     Route::middleware('role:student')->group(function () {
         Route::post('/courses/{id}/enroll', [CourseController::class, 'enroll']);
 
         Route::get('/materials/{id}/download', [MaterialController::class, 'download']);
+
+        Route::post('/submissions', [SubmissionController::class, 'submission']);
     });
 
     Route::post('/logout', [AuthController::class, 'logout']);
