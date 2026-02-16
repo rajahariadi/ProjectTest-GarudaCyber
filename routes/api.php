@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +31,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/courses', [CourseController::class, 'index']);
+
+    Route::post('/discussions', [DiscussionController::class, 'discussion']);
+
+    Route::post('/discussions/{id}/replies', [ReplyController::class, 'reply']);
 
     Route::middleware('role:lecturer')->group(function () {
         Route::post('/courses', [CourseController::class, 'store']);
