@@ -19,10 +19,10 @@ class Submission extends Model
 
     public function assignments()
     {
-        $this->belongsTo(Assignment::class);
+        return $this->belongsTo(Assignment::class);
     }
     public function students()
     {
-        $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'student_id');
     }
 }

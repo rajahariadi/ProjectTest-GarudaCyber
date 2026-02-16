@@ -18,6 +18,6 @@ class Material extends Model
 
     public function courses()
     {
-        $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class);
     }
 }

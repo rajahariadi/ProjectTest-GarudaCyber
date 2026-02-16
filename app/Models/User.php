@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -46,26 +47,26 @@ class User extends Authenticatable
 
     public function courses()
     {
-        $this->belongsToMany(Course::class);
+        return $this->belongsToMany(Course::class);
     }
 
     public function teachingCourses()
     {
-        $this->hasMany(Course::class, 'lecturer_id');
+        return $this->hasMany(Course::class, 'lecturer_id');
     }
 
     public function submissions()
     {
-        $this->hasMany(Submission::class, 'student_id');
+        return $this->hasMany(Submission::class, 'student_id');
     }
 
     public function discussions()
     {
-        $this->hasMany(Discussion::class);
+        return $this->hasMany(Discussion::class);
     }
 
     public function replies()
     {
-        $this->hasMany(Reply::class);
+        return $this->hasMany(Reply::class);
     }
 }

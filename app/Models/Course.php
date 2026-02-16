@@ -18,12 +18,12 @@ class Course extends Model
 
     public function students()
     {
-        $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 
     public function lecturers()
     {
-        $this->belongsTo(User::class, 'lecturer_id');
+        return $this->belongsTo(User::class, 'lecturer_id');
     }
 
     public function materials()

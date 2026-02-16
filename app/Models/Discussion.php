@@ -18,16 +18,16 @@ class Discussion extends Model
 
     public function courses()
     {
-        $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function users()
     {
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function replies()
     {
-        $this->hasMany(Reply::class);
+        return $this->hasMany(Reply::class);
     }
 }

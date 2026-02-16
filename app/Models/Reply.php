@@ -18,11 +18,11 @@ class Reply extends Model
 
     public function discussions()
     {
-        $this->belongsTo(Discussion::class);
+        return $this->belongsTo(Discussion::class);
     }
 
     public function user()
     {
-        $this->belongsTo(User::class);
+        return  $this->belongsTo(User::class);
     }
 }
