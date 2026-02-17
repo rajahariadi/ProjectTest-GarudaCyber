@@ -66,4 +66,85 @@ class AssignmentController extends Controller
             ], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $assignment = Assignment::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'deadline' => 'required|date',
+        ], [
+            'course_id.required' => 'Course tidak boleh kosong',
+            'title.required' => 'Title tidak boleh kosong',
+            'description.required' => 'Description tidak boleh kosong',
+            'deadline.required' => 'Deadline tidak boleh kosong',
+            'deadline.date' => 'Deadline tidak valid',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if (!$assignment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            $assignment->update([
+                'course_id' => $request->course_id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'deadline' => $request->deadline,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Assignment berhasil diedit',
+                'data' => $assignment
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment gagal diedit',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $assignment = Assignment::find($id);
+
+        if (!$assignment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            $assignment->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Assignment berhasil dihapus',
+                'data' => $assignment
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment gagal dihapus',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
