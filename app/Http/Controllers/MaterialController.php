@@ -13,11 +13,12 @@ class MaterialController extends Controller
     public function upload(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'course_id' => 'required',
+            'course_id' => 'required|exists:courses,id',
             'title' => 'required',
             'file_path' => 'required|file|mimes:pdf,doc,docx|max:5120'
         ], [
             'course_id.required' => 'Course tidak boleh kosong',
+            'course_id.exists' => 'Course tidak ditemukan',
             'title.required' => 'Title tidak boleh kosong',
             'file_path.required' => 'File tidak boleh kosong',
             'file_path.mimes' => 'Format File tidak valid (pdf,doc,docx)',
@@ -85,11 +86,12 @@ class MaterialController extends Controller
         $material = Material::find($id);
 
         $validator = Validator::make($request->all(), [
-            'course_id' => 'required',
+            'course_id' => 'required|exists:courses,id',
             'title' => 'required',
             'file_path' => 'file|mimes:pdf,doc,docx|max:5120'
         ], [
             'course_id.required' => 'Course tidak boleh kosong',
+            'course_id.exists' => 'Course tidak ditemukan',
             'title.required' => 'Title tidak boleh kosong',
             'file_path.mimes' => 'Format File tidak valid (pdf,doc,docx)',
             'file_path.max' => 'File tidak boleh lebih dari 5 MB'

@@ -14,16 +14,18 @@ class AssignmentController extends Controller
     public function assignment(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'course_id' => 'required',
+            'course_id' => 'required|exists:courses,id',
             'title' => 'required',
             'description' => 'required',
-            'deadline' => 'required|date',
+            'deadline' => 'required|date|after:now',
         ], [
             'course_id.required' => 'Course tidak boleh kosong',
+            'course_id.exists' => 'Course tidak ditemukan',
             'title.required' => 'Title tidak boleh kosong',
             'description.required' => 'Description tidak boleh kosong',
             'deadline.required' => 'Deadline tidak boleh kosong',
             'deadline.date' => 'Deadline tidak valid',
+            'deadline.after' => 'Deadline tidak boleh kurang dari sekarang',
         ]);
 
         if ($validator->fails()) {
@@ -72,16 +74,18 @@ class AssignmentController extends Controller
         $assignment = Assignment::find($id);
 
         $validator = Validator::make($request->all(), [
-            'course_id' => 'required',
+            'course_id' => 'required|exists:courses,id',
             'title' => 'required',
             'description' => 'required',
-            'deadline' => 'required|date',
+            'deadline' => 'required|date|after:now',
         ], [
             'course_id.required' => 'Course tidak boleh kosong',
+            'course_id.exists' => 'Course tidak ditemukan',
             'title.required' => 'Title tidak boleh kosong',
             'description.required' => 'Description tidak boleh kosong',
             'deadline.required' => 'Deadline tidak boleh kosong',
             'deadline.date' => 'Deadline tidak valid',
+            'deadline.after' => 'Deadline tidak boleh kurang dari sekarang',
         ]);
 
         if ($validator->fails()) {

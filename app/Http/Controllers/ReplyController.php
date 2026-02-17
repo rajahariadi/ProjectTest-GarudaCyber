@@ -12,10 +12,11 @@ class ReplyController extends Controller
     public function reply(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'discussion_id' => 'required',
+            'discussion_id' => 'required|exists:discussions,id',
             'content' => 'required',
         ], [
             'discussion_id.required' => 'Discussion tidak boleh kosong',
+            'discussion_id.exists' => 'Discussion tidak ditemukan',
             'content.required' => 'Content tidak boleh kosong',
         ]);
 

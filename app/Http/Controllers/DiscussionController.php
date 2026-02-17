@@ -12,10 +12,11 @@ class DiscussionController extends Controller
     public function discussion(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'course_id' => 'required',
+            'course_id' => 'required|exists:courses,id',
             'content' => 'required',
         ], [
             'course_id.required' => 'Course tidak boleh kosong',
+            'course_id.exists' => 'Course tidak ditemukan',
             'content.required' => 'Content tidak boleh kosong',
         ]);
 
