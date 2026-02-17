@@ -17,11 +17,11 @@ class Submission extends Model
         'score'
     ];
 
-    public function assignments()
+    public function assignment()
     {
         return $this->belongsTo(Assignment::class);
     }
-    public function students()
+    public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
     }

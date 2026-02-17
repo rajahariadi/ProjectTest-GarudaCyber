@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SubmissionScore;
 use App\Models\Assignment;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -80,10 +82,22 @@ class SubmissionController extends Controller
             ], 422);
         }
 
+
         try {
             $submission->update([
                 'score' => $request->score,
             ]);
+
+            $student = $submission->student;
+            $course = $submission->assignment->course;
+            $assignmentTitle = $submission->assignment->title;
+
+            Mail::to($student->email)->send(new SubmissionScore(
+                $student,
+                $course,
+                $assignmentTitle,
+                $request->score
+            ));
 
             return response()->json([
                 'success' => true,

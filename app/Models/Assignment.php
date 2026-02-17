@@ -17,7 +17,7 @@ class Assignment extends Model
         'deadline'
     ];
 
-    public function courses()
+    public function course()
     {
         return $this->belongsTo(Course::class);
     }

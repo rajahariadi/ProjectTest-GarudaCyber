@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewAssignment;
 use App\Models\Assignment;
+use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AssignmentController extends Controller
@@ -38,6 +41,17 @@ class AssignmentController extends Controller
                 'description' => $request->description,
                 'deadline' => $request->deadline,
             ]);
+
+            $course = Course::find($request->course_id);
+            $students = $course->students;
+
+            foreach ($students as $student) {
+                Mail::to($student->email)->send(new NewAssignment(
+                    $course,
+                    $student,
+                    $assignment->title
+                ));
+            }
 
             return response()->json([
                 'success' => true,
