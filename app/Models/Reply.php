@@ -16,7 +16,7 @@ class Reply extends Model
         'content'
     ];
 
-    public function discussions()
+    public function discussion()
     {
         return $this->belongsTo(Discussion::class);
     }
