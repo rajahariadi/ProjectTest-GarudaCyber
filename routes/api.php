@@ -6,6 +6,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/discussions', [DiscussionController::class, 'discussion']);
 
     Route::post('/discussions/{id}/replies', [ReplyController::class, 'reply']);
+
+    Route::get('/reports/courses',[ReportController::class, 'course']);
+    Route::get('/reports/assignments',[ReportController::class, 'assignment']);
+    Route::get('/reports/students/{id}',[ReportController::class, 'student']);
 
     Route::middleware('role:lecturer')->group(function () {
         Route::post('/courses', [CourseController::class, 'store']);
