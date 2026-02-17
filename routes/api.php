@@ -37,9 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/discussions/{id}/replies', [ReplyController::class, 'reply']);
 
-    Route::get('/reports/courses',[ReportController::class, 'course']);
-    Route::get('/reports/assignments',[ReportController::class, 'assignment']);
-    Route::get('/reports/students/{id}',[ReportController::class, 'student']);
+    Route::get('/reports/courses', [ReportController::class, 'course']);
+    Route::get('/reports/assignments', [ReportController::class, 'assignment']);
+    Route::get('/reports/students/{id}', [ReportController::class, 'student']);
 
     Route::middleware('role:lecturer')->group(function () {
         Route::post('/courses', [CourseController::class, 'store']);
@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
 
         Route::post('/materials', [MaterialController::class, 'upload']);
+        Route::put('/materials/{id}', [MaterialController::class, 'update']);
+        Route::delete('/materials/{id}', [MaterialController::class, 'destroy']);
 
         Route::post('/assignments', [AssignmentController::class, 'assignment']);
 

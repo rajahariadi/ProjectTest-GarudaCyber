@@ -79,4 +79,95 @@ class MaterialController extends Controller
             ], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $material = Material::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required',
+            'title' => 'required',
+            'file_path' => 'file|mimes:pdf,doc,docx|max:5120'
+        ], [
+            'course_id.required' => 'Course tidak boleh kosong',
+            'title.required' => 'Title tidak boleh kosong',
+            'file_path.mimes' => 'Format File tidak valid (pdf,doc,docx)',
+            'file_path.max' => 'File tidak boleh lebih dari 5 MB'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if (!$material) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Material tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            if ($request->hasFile('file_path')) {
+                if ($material->file_path && Storage::disk('public')->exists($material->file_path)) {
+                    Storage::disk('public')->delete($material->file_path);
+                }
+
+                $file = $request->file('file_path');
+                $extension = $file->getClientOriginalExtension();
+                $fileName = time() . '_' . Str::slug($request->title) . '.' . $extension;
+                $path = Storage::disk('public')->putFileAs('materials', $file, $fileName);
+
+                $material->update([
+                    'file_path' => $path
+                ]);
+            }
+
+            $material->update([
+                'course_id' => $request->course_id,
+                'title' => $request->title,
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Material berhasil diedit',
+                'data' => $material
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Material gagal diedit',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $material = Material::find($id);
+
+        if (!$material) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Material tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            $material->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Material berhasil dihapus',
+                'data' => $material
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Material gagal dihapus',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
