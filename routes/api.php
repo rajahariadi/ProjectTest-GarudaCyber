@@ -34,8 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses', [CourseController::class, 'index']);
 
     Route::post('/discussions', [DiscussionController::class, 'discussion']);
+    Route::put('/discussions/{id}', [DiscussionController::class, 'update']);
+    Route::delete('/discussions/{id}', [DiscussionController::class, 'destroy']);
 
     Route::post('/discussions/{id}/replies', [ReplyController::class, 'reply']);
+    Route::put('/discussions/{id}/replies/{replies_id}', [ReplyController::class, 'update']);
+    Route::delete('/discussions/{id}/replies/{replies_id}', [ReplyController::class, 'destroy']);
 
     Route::get('/reports/courses', [ReportController::class, 'course']);
     Route::get('/reports/assignments', [ReportController::class, 'assignment']);

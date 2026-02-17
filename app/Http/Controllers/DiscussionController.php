@@ -47,4 +47,90 @@ class DiscussionController extends Controller
             ], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $discussion = Discussion::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required',
+        ], [
+            'content.required' => 'Content tidak boleh kosong',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        if (!$discussion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discussion tidak ditemukan'
+            ], 404);
+        }
+
+        if (Auth::user()->id !== $discussion->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak'
+            ], 403);
+        }
+
+        try {
+            $discussion->update([
+                'course_id' => $request->course_id,
+                'content' => $request->content,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Discussion berhasil diedit',
+                'data' => $discussion
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discussion gagal diedit',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $discussion = Discussion::find($id);
+
+        if (!$discussion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discussion tidak ditemukan'
+            ], 404);
+        }
+
+        if (Auth::user()->id !== $discussion->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak'
+            ], 403);
+        }
+
+        try {
+            $discussion->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Discussion berhasil dihapus',
+                'data' => $discussion
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discussion gagal dihapus',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
