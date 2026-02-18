@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DiscussionCreated;
+use App\Events\DiscussionDeleted;
+use App\Events\DiscussionUpdated;
 use App\Models\Discussion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +37,8 @@ class DiscussionController extends Controller
                 'user_id' => Auth::user()->id,
                 'content' => $request->content,
             ]);
+
+            broadcast(new DiscussionCreated($discussion))->toOthers();
 
             return response()->json([
                 'success' => true,
@@ -87,6 +92,8 @@ class DiscussionController extends Controller
                 'content' => $request->content,
             ]);
 
+            broadcast(new DiscussionUpdated($discussion))->toOthers();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Discussion berhasil diedit',
@@ -121,6 +128,9 @@ class DiscussionController extends Controller
 
         try {
             $discussion->delete();
+
+            broadcast(new DiscussionDeleted($discussion))->toOthers();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Discussion berhasil dihapus',

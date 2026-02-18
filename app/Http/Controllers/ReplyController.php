@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ReplyCreated;
+use App\Events\ReplyDeleted;
+use App\Events\ReplyUpdated;
+use App\Models\Discussion;
 use App\Models\Reply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +13,13 @@ use Illuminate\Support\Facades\Validator;
 
 class ReplyController extends Controller
 {
-    public function reply(Request $request)
+    public function reply(Request $request, $id)
     {
+        $discussion = Discussion::find($id);
+
         $validator = Validator::make($request->all(), [
-            'discussion_id' => 'required|exists:discussions,id',
             'content' => 'required',
         ], [
-            'discussion_id.required' => 'Discussion tidak boleh kosong',
-            'discussion_id.exists' => 'Discussion tidak ditemukan',
             'content.required' => 'Content tidak boleh kosong',
         ]);
 
@@ -28,12 +31,22 @@ class ReplyController extends Controller
             ], 422);
         }
 
+        if (!$discussion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Discussion tidak ditemukan'
+            ], 404);
+        }
+
         try {
             $reply = Reply::create([
-                'discussion_id' => $request->discussion_id,
+                'discussion_id' => $discussion->id,
                 'user_id' => Auth::user()->id,
                 'content' => $request->content,
             ]);
+
+            $reply->load('discussion.course');
+            broadcast(new ReplyCreated($reply))->toOthers();
 
             return response()->json([
                 'success' => true,
@@ -86,6 +99,9 @@ class ReplyController extends Controller
                 'content' => $request->content,
             ]);
 
+            $reply->load('discussion');
+            broadcast(new ReplyUpdated($reply))->toOthers();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Reply berhasil diedit',
@@ -119,6 +135,9 @@ class ReplyController extends Controller
         }
 
         try {
+            $reply->load('discussion');
+            broadcast(new ReplyDeleted($reply));
+
             $reply->delete();
             return response()->json([
                 'success' => true,
